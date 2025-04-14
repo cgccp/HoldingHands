@@ -9,7 +9,18 @@
 #pragma comment(lib,"libavutil.lib")
 #pragma comment(lib,"libswresample.lib")
 #else
-#error "缺少`ffmpeg`静态库，无法编译64位程序!"
+// https://github.com/ShiftMediaProject/FFmpeg
+#pragma comment(lib,"libx264.lib")
+#ifndef _DEBUG
+#pragma comment(lib,"libavcodec.lib")
+#pragma comment(lib,"libavutil.lib")
+#pragma comment(lib,"libswresample.lib")
+#else
+#pragma comment(lib,"libavcodecd.lib")
+#pragma comment(lib,"libavutild.lib")
+#pragma comment(lib,"libswresampled.lib")
+#endif
+extern "C" void* x265_api_get_192() { return nullptr; }
 #endif
 
 #pragma comment(lib,"libyuv.lib")

@@ -20,8 +20,12 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-
 	CConfig & m_config;
 public:
 	afx_msg void OnBnClickedOk();
+	CEdit m_EditPort;
+	CEdit m_EditMaxConnection;
+	CButton m_BnOverwrite;
+	CEdit m_EditDesktopSavePath;
+	CEdit m_EditCameraSavePath;
 };

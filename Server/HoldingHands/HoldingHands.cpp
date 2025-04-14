@@ -171,7 +171,10 @@ BOOL CHoldingHandsApp::InitInstance()
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("HoldingHands"));
 
+#ifndef _WIN64
+	// 从 FFmpeg v4.0 开始，FFmpeg 就逐步废弃了 avcodec_register_all()
 	avcodec_register_all();
+#endif
 	
 	//
 	WSADATA wsadata;

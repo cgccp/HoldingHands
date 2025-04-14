@@ -5,7 +5,6 @@
 #include "utils.h"
 #include "resource.h"
 #include "MainFrm.h"
-#include "json\json.h"
 
 #ifdef _WIN64
 #ifdef _DEBUG

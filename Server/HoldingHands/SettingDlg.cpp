@@ -25,6 +25,11 @@ CSettingDlg::~CSettingDlg()
 void CSettingDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT1, m_EditPort);
+	DDX_Control(pDX, IDC_EDIT3, m_EditMaxConnection);
+	DDX_Control(pDX, IDC_CHECK1, m_BnOverwrite);
+	DDX_Control(pDX, IDC_EDIT2, m_EditDesktopSavePath);
+	DDX_Control(pDX, IDC_EDIT4, m_EditCameraSavePath);
 }
 
 

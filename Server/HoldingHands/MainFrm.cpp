@@ -324,15 +324,19 @@ void CMainFrame::OnMainStartserver()
 				break;
 			}
 
-			if (!m_pServer->Bind(10086, "0.0.0.0"))
+			if (!m_pServer->Bind(m_listenPort, "0.0.0.0"))
 			{
-				MessageBox(TEXT("Bind failed"), TEXT("Error"), MB_OK);
+				CString err;
+				err.Format(_T("Bind failed: %d"), GetLastError());
+				MessageBox(err, TEXT("Error"), MB_OK);
 				break;
 			}
 
 			if (!m_pServer->Listen(1024))
 			{
-				MessageBox(TEXT("Listen failed"), TEXT("Error"), MB_OK);
+				CString err;
+				err.Format(_T("Listen failed: %d"), GetLastError());
+				MessageBox(err, TEXT("Error"), MB_OK);
 				break;
 			}
 
@@ -523,7 +527,9 @@ void CMainFrame::OnMainBuild()
 void CMainFrame::OnMainSettings()
 {
 	CSettingDlg dlg(m_config, this);
-	dlg.DoModal();
+	if (dlg.DoModal() == IDOK) {
+		MessageBox(TEXT("This feature hasn't been implemented!"));
+	}
 }
 
 void CMainFrame::OnSize(UINT nType, int cx, int cy)
