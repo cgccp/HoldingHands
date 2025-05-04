@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "FileDownloadSrv.h"
-#include "json\json.h"
+#include "Config.h"
 #include "utils.h"
 
 /*
@@ -47,11 +47,11 @@ void CFileDownloadSrv::OnEvent(UINT32 e, BYTE *lpData, UINT32 Size)
 
 void CFileDownloadSrv::OnDownloadResult(char*result)
 {
-	Json::Value root;
+	Config root;
 
-	if (!Json::Reader().parse(result, root))
+	if (!ParseConfig(result, root))
 	{
-		Notify(WM_MNDD_ERROR, (WPARAM)TEXT("Parse Json Failed"));
+		Notify(WM_MNDD_ERROR, (WPARAM)TEXT("Parse Config Failed"));
 		Close();
 		return;
 	}
@@ -108,10 +108,10 @@ void CFileDownloadSrv::OnDownloadResult(char*result)
 
 void CFileDownloadSrv::OnFileInfo(char*fileinfo)
 {
-	Json::Value root;
-	if (!Json::Reader().parse(fileinfo, root))
+	Config root;
+	if (!ParseConfig(fileinfo, root))
 	{
-		Notify(WM_MNDD_ERROR, (WPARAM)TEXT("Parse Json Failed"));
+		Notify(WM_MNDD_ERROR, (WPARAM)TEXT("Parse Config Failed"));
 		Close();
 		return;
 	}

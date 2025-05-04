@@ -1,11 +1,5 @@
 #include "Camera.h"
-#include <json\json.h>
-
-#ifdef _DEBUG
-#pragma comment(lib,"jsond.lib")
-#else
-#pragma comment(lib,"json.lib")
-#endif
+#include <configuration.h>
 
 #define STRSAFE_NO_DEPRECATE
 
@@ -40,20 +34,19 @@ void CCamera::OnOpen()
 	}
 
 	const VideoInfoList&video_info = m_Grab.GetDeviceList();
-	Json::FastWriter writer;
-	Json::Value root;
+	Config root;
 
 	for (auto & device : video_info)
 	{
-		Json::Value size;
+		Config size;
 		for (auto&video_size : device.second)
 		{
 			size["width"] = video_size.first;
 			size["height"] = video_size.second;
-			root[device.first].append(size);
+			root[device.first.c_str()].append(size);
 		}
 	}
-	string response = writer.write(root);
+	string response = WriteConfig(root);
 	Send(CAMERA_DEVICELIST, (void*)response.c_str(), response.length() + 1);
 }
 
@@ -68,7 +61,7 @@ void CCamera::OnStart(const string &device_name,int width, int height)
 {
 	DWORD dwResponse[3] = { 0 };
 	string data;
-	Json::Value res;
+	Config res;
 
 	char szError[0x100];
 	
@@ -92,7 +85,7 @@ void CCamera::OnStart(const string &device_name,int width, int height)
 	res["width"] = width;
 	res["height"] = height;
 
-	data = Json::FastWriter().write(res);
+	data = WriteConfig(res);
 	Send(CAMERA_VIDEOSIZE, (void*)data.c_str(), data.length() + 1);
 	
 	if (code)
@@ -159,9 +152,8 @@ void CCamera::OnEvent(UINT32 e, BYTE*lpData,UINT Size)
 	{
 	case CAMERA_START:
 		do{
-			Json::Value root;
-			Json::Reader reader;
-			if (reader.parse((char*)lpData, root))
+			Config root;
+			if (ParseConfig((char*)lpData, root))
 			{
 				OnStart(
 					root["device"].asString(),

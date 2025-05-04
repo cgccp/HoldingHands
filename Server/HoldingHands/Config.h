@@ -1,5 +1,7 @@
 #pragma once
-#include "json\json.h"
+
+#include "configuration.h"
+
 /*
 config format....
 #
@@ -11,13 +13,13 @@ key = value
 class CConfig
 {
 private:
-	Json::Value m_config;
+	Config m_config;
 
 public:
 	BOOL LoadConfig(const CString & config_file_path);
 	VOID SaveConfig(const CString & config_file_path) const;
 
-	Json::Value & cfg()
+	Config& cfg()
 	{ 
 		return m_config;
 	};
@@ -31,10 +33,7 @@ public:
 		}
 	}
 
-	CConfig::CConfig()
-	{
-	}
+	CConfig(){}
 
-	~CConfig();
+	~CConfig(){}
 };
-

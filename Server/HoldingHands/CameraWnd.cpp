@@ -3,15 +3,9 @@
 #include "MainFrm.h"
 #include <string>
 #include "CameraSrv.h"
-#include "json\json.h"
+#include "Config.h"
 #include "utils.h"
 #include "MainFrm.h"
-
-#ifdef DEBUG
-#pragma comment(lib,"jsond.lib")
-#else
-#pragma comment(lib,"json.lib")
-#endif
 
 #define MIN_WIDTH			460	
 #define MIN_HEIGHT			240
@@ -81,12 +75,11 @@ int CCameraWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 LRESULT CCameraWnd::OnDeviceList(WPARAM wParam, LPARAM lParam)
 {
 	string json_res = (char*)wParam;
-	Json::Reader reader;
-	Json::Value root;
+	Config root;
 
-	if (!reader.parse(json_res, root))
+	if (!ParseConfig(json_res, root))
 	{
-		MessageBox(TEXT("Parse Json Failed!"));
+		MessageBox(TEXT("Parse Config Failed!"));
 		return 0;
 	}
 
@@ -98,7 +91,7 @@ LRESULT CCameraWnd::OnDeviceList(WPARAM wParam, LPARAM lParam)
 		pMenu->AppendMenu(MF_STRING, IDM_RECORD, TEXT("Record"));
 		pMenu->AppendMenu(MF_SEPARATOR);
 
-		Json::Value::Members members = root.getMemberNames();
+		Config::Members members = root.getMemberNames();
 		for (auto it = members.begin(); it != members.end(); it++)
 		{
 			string device_name = *it;
@@ -107,11 +100,11 @@ LRESULT CCameraWnd::OnDeviceList(WPARAM wParam, LPARAM lParam)
 			CMenu VideoSizeMenu;
 			VideoSizeMenu.CreateMenu();
 
-			int iSize = root[device_name].size();
+			int iSize = root[device_name.c_str()].size();
 			
 			for (int i = 0; i < iSize;i++)
 			{
-				Json::Value Size = root[device_name][i];
+				Config Size = root[device_name.c_str()][i];
 				CString strSize;
 				int width = Size["width"].asInt();
 				int height = Size["height"].asInt();

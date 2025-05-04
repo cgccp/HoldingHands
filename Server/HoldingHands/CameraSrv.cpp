@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CameraSrv.h"
-#include "json\json.h"
+#include "Config.h"
 #include "utils.h"
 #include "dbg.h"
 
@@ -44,8 +44,8 @@ void CCameraSrv::OnEvent(UINT32 e, BYTE *lpData, UINT32 Size)
 		break;
 	case CAMERA_VIDEOSIZE:
 		do{
-			Json::Value res;
-			if (Json::Reader().parse((char*)lpData, res)){
+			Config res;
+			if (ParseConfig((char*)lpData, res)){
 				int code = res["code"].asInt();
 				string err = res["err"].asString();
 				int width = res["width"].asInt();
@@ -76,12 +76,12 @@ void CCameraSrv::OnDeviceList(char*DeviceList)
 
 void CCameraSrv::Start(const char* device, int Width, int Height)
 {
-	Json::Value res;
+	Config res;
 	string data;
 	res["device"] = device;
 	res["width"] = Width;
 	res["height"] = Height;
-	data = Json::FastWriter().write(res);
+	data = WriteConfig(res);
 
 	Send(CAMERA_START, (char*)data.c_str(), data.length() + 1);
 }

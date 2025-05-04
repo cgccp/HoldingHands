@@ -3,7 +3,7 @@
 #include "utils.h"
 #include "dbg.h"
 #include "filedownloader_common.h"
-#include <json\json.h>
+#include <configuration.h>
 
 #define MAX_CHUNK_SIZE 0x10000
 

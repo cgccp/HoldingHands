@@ -1,19 +1,12 @@
 #include "FileDownloader.h"
 #include <stdio.h>
 #include "utils.h"
-#include <json\json.h>
+#include <configuration.h>
 #include <string>
 #include <Shlwapi.h>
 #include <dbg.h>
 
-
 #pragma comment(lib,"wininet.lib")
-
-#ifdef _DEBUG
-#pragma comment(lib,"jsond.lib")
-#else
-#pragma comment(lib,"json.lib")
-#endif
 
 CFileDownloader::CFileDownloader(CClient* pClient,
 	Module * owner,
@@ -153,10 +146,9 @@ void CFileDownloader::OnEndDownload()
 void CFileDownloader::OnContinueDownload()
 {
 	//Continue Download.
-	Json::Value root;
+	Config root;
 	DWORD dwReadBytes = 0;
 	DWORD dwWriteBytes = 0;
-	Json::FastWriter writer = Json::FastWriter();
 
 	std::string res;
 
@@ -168,7 +160,7 @@ void CFileDownloader::OnContinueDownload()
 	{
 		root["code"] = "-1";
 		root["err"] = "InternetReadFile Failed";
-		res = writer.write(root);
+		res = WriteConfig(root);
 		Send(MNDD_DOWNLOAD_RESULT, (void*)res.c_str(), res.length() + 1);
 		return;
 	}
@@ -184,7 +176,7 @@ void CFileDownloader::OnContinueDownload()
 
 		root["code"] = "-2";
 		root["err"] = "WriteFile Failed";
-		res = Json::FastWriter().write(root);
+		res = WriteConfig(root);
 		Send(MNDD_DOWNLOAD_RESULT, (void*)res.c_str(), res.length() + 1);
 		return;
 	}
@@ -201,7 +193,7 @@ void CFileDownloader::OnContinueDownload()
 		root["err"] = "finished";
 	}
 
-	res = Json::FastWriter().write(root);
+	res = WriteConfig(root);
 	Send(MNDD_DOWNLOAD_RESULT, (void*)res.c_str(), res.length() + 1);
 	return;
 }
@@ -218,14 +210,13 @@ void CFileDownloader::OnContinueDownload()
 
 void CFileDownloader::OnGetFileInfo()
 {
-	Json::Value root;
+	Config root;
 	DWORD HttpFlag = NULL; 
 	char buffer[128] = {0};			//http file sizeπª¡À;
 	DWORD dwBufferLength = 128;
 	TCHAR  szFileName[MAX_PATH];
 	TCHAR * p;
 	std::string res;
-	Json::FastWriter writer = Json::FastWriter();
 	UINT32 localFileNameLength = 0;
 	TCHAR * localFileName;
 
@@ -250,7 +241,7 @@ void CFileDownloader::OnGetFileInfo()
 	{
 		root["code"] = "-1";
 		root["err"] = "InternetCrackUrl Failed";
-		res = writer.write(root);
+		res = WriteConfig(root);
 		Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 		return;
 	}
@@ -290,7 +281,7 @@ void CFileDownloader::OnGetFileInfo()
 	{
 		root["code"] = "-2";
 		root["err"] = "InternetOpen Failed";
-		res = writer.write(root);
+		res = WriteConfig(root);
 		Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 		return;
 	}
@@ -310,7 +301,7 @@ void CFileDownloader::OnGetFileInfo()
 		if (!m_hConnect){
 			root["code"] = "-3";
 			root["err"] = "InternetConnect Failed";
-			res = writer.write(root);
+			res = WriteConfig(root);
 			Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 			return;
 		}
@@ -325,7 +316,7 @@ void CFileDownloader::OnGetFileInfo()
 		{
 			root["code"] = "-3";
 			root["err"] = "FtpOpenFile Failed";
-			res = writer.write(root);
+			res = WriteConfig(root);
 			Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 			return;
 		}
@@ -352,7 +343,7 @@ void CFileDownloader::OnGetFileInfo()
 		{
 			root["code"] = "-4";
 			root["err"] = "InternetConnect Failed";
-			res = writer.write(root);
+			res = WriteConfig(root);
 			Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 			return;
 		}
@@ -371,7 +362,7 @@ void CFileDownloader::OnGetFileInfo()
 		{
 			root["code"] = "-5";
 			root["err"] = "HttpOpenRequest Failed";
-			res = writer.write(root);
+			res = WriteConfig(root);
 			Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 			return;
 		}
@@ -380,7 +371,7 @@ void CFileDownloader::OnGetFileInfo()
 		{
 			root["code"] = "-6";
 			root["err"] = "HttpSendRequest Failed";
-			res = writer.write(root);
+			res = WriteConfig(root);
 			Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 			return;
 		}
@@ -400,7 +391,7 @@ void CFileDownloader::OnGetFileInfo()
 		do{
 			root["code"] = "-8";
 			root["err"] = "Unsupported  Protocol.";
-			res = writer.write(root);
+			res = WriteConfig(root);
 			Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 			return;
 		} while (0);
@@ -421,7 +412,7 @@ void CFileDownloader::OnGetFileInfo()
 	{
 		root["code"] = "-9";
 		root["err"] = "CreateFile Failed.";
-		res = writer.write(root);
+		res = WriteConfig(root);
 		Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 		return;
 	}
@@ -444,7 +435,7 @@ void CFileDownloader::OnGetFileInfo()
 	root["filename"] = szFileName;
 	root["url"] = m_szUrl;
 #endif 
-	res = writer.write(root);
+	res = WriteConfig(root);
 	Send(MNDD_FILE_INFO, (void*)res.c_str(), res.length() + 1);
 	return;
 }

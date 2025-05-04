@@ -109,8 +109,8 @@ void CClientView::OnDestroy()
 	CView::OnDestroy();
 
 	// TODO:  在此处添加消息处理程序代码
-	Json::Value name;
-	Json::Value groups;
+	Config name;
+	Config groups;
 
 	POSITION pos = m_ClientGroups.GetStartPosition();
 	while (pos){
@@ -137,7 +137,7 @@ int CClientView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO:  在此添加您专用的创建代码
 	CRect rectDummy;
 	LPVOID DefaultGroup = NULL;
-	Json::Value groups;
+	Config groups;
 
 	rectDummy.SetRectEmpty();
 
@@ -155,7 +155,7 @@ int CClientView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//Create groups..
 
-	Json::Value cfg = ((CMainFrame*)GetParent())->Config().cfg();
+	Config cfg = ((CMainFrame*)GetParent())->Config().cfg();
 	groups = cfg["groups"];
 
 	for (int i = 0; i < groups.size(); i++)

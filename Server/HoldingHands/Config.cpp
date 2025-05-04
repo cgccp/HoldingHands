@@ -2,11 +2,6 @@
 #include "Config.h"
 #include <string>
 
-CConfig::~CConfig()
-{
-
-}
-
 BOOL CConfig::LoadConfig(const CString& config_file_path)
 {
 	CFile			file;
@@ -27,7 +22,7 @@ BOOL CConfig::LoadConfig(const CString& config_file_path)
 		return FALSE;
 	}
 
-	if (!Json::Reader().parse(buff.GetData(), m_config))
+	if (!ParseConfig(buff.GetData(), m_config))
 	{
 		return FALSE;
 	}
@@ -38,7 +33,7 @@ BOOL CConfig::LoadConfig(const CString& config_file_path)
 VOID CConfig::SaveConfig(const CString & config_file_path) const
 {
 	CFile     file;
-	std::string config = Json::StyledWriter().write(m_config);
+	std::string config = WriteConfig(m_config);
 	
 	if (!file.Open(config_file_path, CFile::modeWrite|CFile::modeCreate))
 		return;
