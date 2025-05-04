@@ -193,7 +193,6 @@ void CRemoteDesktopSrv::ScreenShot(CONST TCHAR * szFileName)
 	bmfHeader.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER);
 	bmfHeader.bfSize = dwBufferSize;
 
-
 	HANDLE hFile = CreateFile(
 		szFileName,
 		GENERIC_WRITE,

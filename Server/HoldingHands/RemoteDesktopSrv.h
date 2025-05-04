@@ -47,7 +47,6 @@ private:
 	HDC					m_hMemDC;
 	DWORD				m_flag;
 
-
 	BOOL RemoteDesktopSrvInit(DWORD dwWidth,DWORD dwHeight);
 	void RemoteDesktopSrvTerm();
 	
@@ -56,8 +55,6 @@ private:
 	void OnError(char* szError);
 	void OnFrame(DWORD dwRead,BYTE *Buffer);
 	
-	//void OnBmpFile(BYTE * Buffer, DWORD dwSize);
-
 	void OnSetClipboardText(TCHAR*Text);
 	void NextFrame();
 	void OnMonitorsInfo(RECT * lpMonitors, int n);
@@ -78,4 +75,3 @@ public:
 	CRemoteDesktopSrv(CClient*pClient);
 	~CRemoteDesktopSrv();
 };
-

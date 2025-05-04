@@ -6,6 +6,11 @@
 #include "resource.h"
 #include "MainFrm.h"
 
+// 我猜测HOOK为了解决一次性打开多个远程桌面，去掉HOOK，一次只打开一个远程桌面不会有问题
+#define USING_HOOK 0
+
+#if USING_HOOK
+
 #ifdef _WIN64
 #ifdef _DEBUG
 #define HOOK_DLL "HHRDKbHook_d_x64.dll"
@@ -29,6 +34,8 @@ HHOOK			hKbHook = NULL;
 
 __declspec(dllimport) HWND	hTopWindow;						//顶层窗口
 __declspec(dllimport) LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);	//钩子函数
+
+#endif
 
 #define FIRST_MONITOR_ID 0x40
 #define MAX_MONITOR_ID (FIRST_MONITOR_ID + 0x10)
@@ -55,6 +62,7 @@ CRemoteDesktopWnd::CRemoteDesktopWnd(CRemoteDesktopSrv*pHandler):
 {
 	m_DisplayMode |= DISPLAY_TILE;
 
+#if USING_HOOK
 	if (!dwWndCount)
 	{
 		hKbHook = SetWindowsHookEx(
@@ -65,6 +73,8 @@ CRemoteDesktopWnd::CRemoteDesktopWnd(CRemoteDesktopSrv*pHandler):
 		);
 	}
 	dwWndCount++;
+#endif
+
 	m_pHandler->Get();
 }
 
@@ -72,14 +82,16 @@ CRemoteDesktopWnd::CRemoteDesktopWnd(CRemoteDesktopSrv*pHandler):
 CRemoteDesktopWnd::~CRemoteDesktopWnd()
 {
 	//构造函数与析构函数是在UI线程,应该不用担心线程安全问题.
-	dwWndCount--;
 
 	m_pHandler->Put();
 
+#if USING_HOOK
+	dwWndCount--;
 	if (!dwWndCount){
 		UnhookWindowsHookEx(hKbHook);
 		hKbHook = NULL;
 	}
+#endif
 }
 
 BEGIN_MESSAGE_MAP(CRemoteDesktopWnd, CFrameWnd)
@@ -117,7 +129,6 @@ BEGIN_MESSAGE_MAP(CRemoteDesktopWnd, CFrameWnd)
 	ON_COMMAND(ID_QUALITY_HIGH, &CRemoteDesktopWnd::OnQualityHigh)
 	ON_MESSAGE(WM_REMOTE_DESKTOP_MONITORS,OnMonitorsInfo)
 	ON_COMMAND_RANGE(FIRST_MONITOR_ID, MAX_MONITOR_ID, SwitchMonitor)
-	//ON_MESSAGE(WM_REMOTE_DESKTOP_SCREENSHOT, OnScreenShot)
 	ON_WM_SYSCOMMAND()
 END_MESSAGE_MAP()
 
@@ -628,8 +639,11 @@ void CRemoteDesktopWnd::OnSetFocus(CWnd* pOldWnd)
 {
 	CFrameWnd::OnSetFocus(pOldWnd);
 
+
+#if USING_HOOK
 	// TODO:  在此处添加消息处理程序代码
 	hTopWindow = m_hWnd;
+#endif
 }
 
 
@@ -644,7 +658,6 @@ void CRemoteDesktopWnd::OnMaxfps10()
 		MF_BYCOMMAND);
 
 	m_pHandler->StartCapture(m_CurrentMonitor, m_dwMaxpFps, m_dwQuality);
-
 }
 
 
@@ -742,7 +755,6 @@ void CRemoteDesktopWnd::OnDrawClipboard()
 			{
 				//数据改变了,通知对方改变数据
 				m_pHandler->SetClipboardText(szText);
-				//MessageBox(L"通知对方改数据了", L"Tips", MB_OK);
 			}
 			GlobalUnlock(hData);
 		}
@@ -776,13 +788,11 @@ void CRemoteDesktopWnd::OnDisplayFullscreen()
 	GetClientRect(ClientRect);
 	ClientToScreen(ClientRect);
 	
-	//
 	m_FullScreen.left = WndRect.left - ClientRect.left;
 	m_FullScreen.top = WndRect.top - ClientRect.top;
 	m_FullScreen.right = WndRect.right - ClientRect.right + dwWidth;
 	m_FullScreen.bottom = WndRect.bottom - ClientRect.bottom + dwHeight;
 
-	//
 	WINDOWPLACEMENT wp = { 0 };
 	wp.length = sizeof(wp);
 	wp.flags = 0;
@@ -838,7 +848,6 @@ void CRemoteDesktopWnd::OnOtherScreenshot()
 
 	m_pHandler->ScreenShot(OutputFile.GetBuffer());
 }
-
 
 
 BOOL CRemoteDesktopWnd::PreTranslateMessage(MSG* pMsg)
@@ -937,7 +946,6 @@ void CRemoteDesktopWnd::OnQualityLow()
 		ID_QUALITY_LOW,
 		MF_BYCOMMAND);
 
-
 	m_pHandler->StartCapture(m_CurrentMonitor, m_dwMaxpFps, m_dwQuality);
 }
 
@@ -953,7 +961,6 @@ void CRemoteDesktopWnd::OnQualityHigh()
 		MF_BYCOMMAND);
 
 	m_pHandler->StartCapture(m_CurrentMonitor,m_dwMaxpFps, m_dwQuality);
-	
 }
 
 LRESULT CRemoteDesktopWnd::OnMonitorsInfo(WPARAM wParam, LPARAM lParam)

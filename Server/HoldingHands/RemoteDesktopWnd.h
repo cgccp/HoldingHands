@@ -76,7 +76,6 @@ public:
 	LRESULT OnError(WPARAM wParam, LPARAM lParam);
 	LRESULT OnDesktopSize(WPARAM wParam, LPARAM lParam);
 	LRESULT OnSetClipbdText(WPARAM wParam, LPARAM lParam);
-	//LRESULT OnScreenShot(WPARAM wParam, LPARAM lParam);
 	LRESULT OnGetDrawHwnd(WPARAM wParam, LPARAM lParam);
 	
 	LRESULT OnMonitorsInfo(WPARAM wParam, LPARAM lParam);
@@ -100,9 +99,7 @@ public:
 	virtual void PostNcDestroy();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	
-	//afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnQualityLow();
 	afx_msg void OnQualityHigh();
 	virtual void OnUpdateFrameMenu(HMENU hMenuAlt);
 };
-
