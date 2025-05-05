@@ -125,7 +125,7 @@ void CClientView::OnDestroy()
 		}
 	}
 
-	((CMainFrame*)GetParent())->Config().cfg()["groups"] = groups;
+	((CMainFrame*)GetParent())->Config().SetMember("groups", groups);
 }
 
 
@@ -137,7 +137,6 @@ int CClientView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO:  在此添加您专用的创建代码
 	CRect rectDummy;
 	LPVOID DefaultGroup = NULL;
-	Config groups;
 
 	rectDummy.SetRectEmpty();
 
@@ -154,10 +153,7 @@ int CClientView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_DefaultGroup = (CClientGroup*)DefaultGroup;
 
 	//Create groups..
-
-	Config cfg = ((CMainFrame*)GetParent())->Config().cfg();
-	groups = cfg["groups"];
-
+	Config groups = ((CMainFrame*)GetParent())->Config().GetMember("groups");
 	for (int i = 0; i < groups.size(); i++)
 	{
 		CString GroupName = CString(groups[i].asCString());
@@ -374,8 +370,7 @@ LRESULT CClientView::OnGetModulePath(WPARAM wParam, LPARAM lParam)
 {
 	TCHAR *		 Path = (TCHAR*)lParam;
 	CMainFrame * pMainFrame = (CMainFrame*)AfxGetMainWnd();
-	auto cfg = pMainFrame->Config().cfg()["server"]["modules"];
-	CString ModulePath = cfg.isNull() ?  _T("") : CString(cfg.asCString());
+	CString ModulePath = pMainFrame->Config().GetStr("server", "modules");
 
 	lstrcpy(Path, ModulePath);
 	return 0;

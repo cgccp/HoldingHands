@@ -232,7 +232,8 @@ void CCameraWnd::OnSysCommand(UINT nID, LPARAM lParam)
 void CCameraWnd::OnScreenShot()
 {
 	CMainFrame * pMainWnd = (CMainFrame*)AfxGetMainWnd();
-	CString      SavePath = CString(pMainWnd->Config().cfg()["cam"]["screenshot_save_path"].asCString());
+	CString      SavePath = pMainWnd->Config().GetStr("camera", "screenshot_save_path", "./camera");
+
 	CString      FileName;
 	CString      OutputFile;
 

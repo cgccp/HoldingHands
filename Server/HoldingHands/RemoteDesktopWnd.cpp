@@ -827,7 +827,7 @@ void CRemoteDesktopWnd::OnOtherScreenshot()
 {
 	CString      FileName;
 	CMainFrame * pMainWnd = (CMainFrame*)AfxGetMainWnd();
-	CString      SavePath = CString(pMainWnd->Config().cfg()["remote_desktop"]["screenshot_save_path"].asCString());
+	CString      SavePath = pMainWnd->Config().GetStr("remote_desktop","screenshot_save_path", "./remote_desktop");
 
 	CString OutputFile;
 

@@ -28,4 +28,5 @@ public:
 	CButton m_BnOverwrite;
 	CEdit m_EditDesktopSavePath;
 	CEdit m_EditCameraSavePath;
+	virtual BOOL OnInitDialog();
 };

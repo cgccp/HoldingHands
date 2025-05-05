@@ -105,11 +105,7 @@ CMainFrame::CMainFrame()
 
 	m_View = 0;
 	m_pServer = NULL;
-	m_listenPort = 10086;
-
-	m_pServer = NULL;
 	m_Iocp = ((CHoldingHandsApp*)AfxGetApp())->GetIocp();
-	//
 	GetProcessDirectory(szPath);
 
 	CString strPath(szPath);
@@ -118,6 +114,7 @@ CMainFrame::CMainFrame()
 	if (!m_config.LoadConfig(strPath)) {
 		OutputDebugString(CString("Configuration file missing: ") + strPath + CString("\n"));
 	}
+	m_listenPort = m_config.GetInt("server", "port", 10086);
 }
 
 CMainFrame::~CMainFrame()
@@ -527,9 +524,7 @@ void CMainFrame::OnMainBuild()
 void CMainFrame::OnMainSettings()
 {
 	CSettingDlg dlg(m_config, this);
-	if (dlg.DoModal() == IDOK) {
-		MessageBox(TEXT("This feature hasn't been implemented!"));
-	}
+	if (dlg.DoModal() == IDOK);
 }
 
 void CMainFrame::OnSize(UINT nType, int cx, int cy)
